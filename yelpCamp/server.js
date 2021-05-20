@@ -26,7 +26,8 @@ app.use(methodOverride('_method'));
 
 app.get('/',(req,res)=>{
     res.render('home');
-})
+});
+
 app.get('/campgrounds', async (req,res)=>{
     const campGrounds= await campGround.find({});
     res.render('campgrounds/index',{campGrounds})
@@ -43,6 +44,7 @@ app.post('/campgrounds', async(req,res)=>{
      res.redirect(`/campgrounds/${newCamp._id}`);
 
 });
+
 app.get('/campgrounds/:id', async (req,res)=>{
     const {id}= req.params;
     const camp= await campGround.findOne({_id:id});
@@ -67,6 +69,7 @@ app.delete('/campgrounds/:id',async (req,res)=>{
     await campGround.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 })
+
 app.listen('3000', ()=>{
     console.log('sever stated on 3000');
 });
