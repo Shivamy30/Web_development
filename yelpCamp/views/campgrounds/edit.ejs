@@ -1,19 +1,35 @@
 <% layout('layouts/boiler') %> 
 
-    <h1>Edit campgorund</h1>
-    <form action="/campgrounds/<%= camp._id %>?_method=PUT" method="POST">
-        <div>
-            <label for="title">title</label>
-            <input type="text" name="campground[title]" id="tilte" value="<%= camp.title %> ">
-        </div>
-        <div>
-            <label for="location">location</label>
-            <input type="text" name="campground[location]" id="location" value="<%= camp.location %> ">
-        </div>
-        <button>Update</button>
 
-        
-    </form>
-    <footer>
-        <a href="/campgrounds/<%= camp._id %> ">Go Back</a>
-    </footer>
+    <h1 class="text-center">Edit campgorund</h1>
+    <div class="col-6 offset-3">
+        <form action="/campgrounds/<%= camp._id %>?_method=PUT" method="POST">            <div class="mb-3">
+                <label class="form-label" for="title">title</label>
+                <input class="form-control" type="text" name="campground[title]" id="tilte" value="<%= camp.title %>">
+            </div>
+            <div class="mb-3"> 
+                <label class="form-label" for="location">location</label>
+                <input class="form-control" type="text" name="campground[location]" id="location" value="<%= camp.location %>">
+            </div>
+            <div class="mb-3"> 
+                <label class="form-label" for="image">Image Url</label>
+                <input class="form-control" type="text" name="campground[image]" id="image" value="<%= camp.image %> ">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="price"> CampGround Price</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                    <input id="price" type="text" class="form-control" placeholder="0.00" aria-label="" aria-describedby="price-label" name="campground[price]" value="<%= camp.price %> ">
+                  </div>
+            </div>
+            <div class="mb-3"> 
+                <label class="form-label" for="discription">Discription</label>
+                <textarea class="form-control" type="text" name="campground[discription]" id="discription" value="<%= camp.discription %>" ><%= camp.discription %> </textarea>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-info">Update campgorund</button>
+            </div>
+            
+        </form>
+            <a href="/campgrounds/<%= camp._id %> ">Back to campgorund</a>
+    </div>
