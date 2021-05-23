@@ -3,6 +3,7 @@ const mongoose= require('mongoose');
 const path= require('path');
 const ejsMate= require('ejs-mate');
 const catchAsync= require('./utils/catchAsync');
+const ExpressError= require('./utils/expressError');
 const methodOverride= require('method-override');
 const campground = require('./models/campground');
 const app= express();
@@ -73,8 +74,15 @@ app.delete('/campgrounds/:id', catchAsync(async (req,res)=>{
     res.redirect('/campgrounds');
 }));
 
+app.all('*',(req,res,next)=>{
+    next(new ExpressError('Page Not Found',404));
+})
 app.use((err,req,res,next)=>{
-    res.send('hello error found');
+    if(!err){
+        err.message= "something went wrong";
+        err.statusCode= 500;
+    }
+     res.status(err.statusCode).render('error',{err});
 });
 app.listen('3000', ()=>{
     console.log('sever stated on 3000');
