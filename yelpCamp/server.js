@@ -6,10 +6,14 @@ const catchAsync= require('./utils/catchAsync');
 const ExpressError= require('./utils/expressError');
 const methodOverride= require('method-override');
 const campground = require('./models/campground');
+const joi = require('joi');
+const {campgroundSchema}= require('./schemas')
 const app= express();
 
 
 const campGround= require('./models/campground');
+const Joi = require('joi');
+
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser:true,
     useCreateIndex:true,
@@ -21,6 +25,16 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     console.log(err);
 })
 
+const validateCamp=(req,res,next)=>{
+    
+    const {error}= campgroundSchema.validate(req.body);
+    if(error){
+        const msg= error.details.map(el=>el.message).join(',');
+        throw new ExpressError(msg,400);
+    } else {
+        next();
+    }
+}
 app.engine('ejs', ejsMate);
 app.set('view engine','ejs');
 app.set('views', path.join(__dirname,'views'));
@@ -42,7 +56,9 @@ app.get('/campgrounds/new',(req,res)=>{
     res.render('campgrounds/new');
 });
 
-app.post('/campgrounds', catchAsync(async(req,res)=>{
+app.post('/campgrounds',validateCamp, catchAsync(async(req,res)=>{
+
+   
     const newCamp= await new campGround(req.body.campground);
     await newCamp.save();
      res.redirect(`/campgrounds/${newCamp._id}`);
@@ -61,7 +77,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async(req,res)=>{
     res.render('campgrounds/edit',{camp});
 }));
 
-app.put('/campgrounds/:id', catchAsync(async (req,res)=>{
+app.put('/campgrounds/:id', validateCamp, catchAsync(async (req,res)=>{
     const {id}= req.params;
     const camp= await campGround.findByIdAndUpdate(id,req.body.campground);
     res.redirect(`/campgrounds/${camp._id}`);
@@ -78,10 +94,14 @@ app.all('*',(req,res,next)=>{
     next(new ExpressError('Page Not Found',404));
 })
 app.use((err,req,res,next)=>{
-    if(!err){
+
+    if(!err.message){
         err.message= "something went wrong";
-        err.statusCode= 500;
+    } 
+    if(!err.statusCode){
+        err.statusCode=500;
     }
+    console.log(err.statusCode);
      res.status(err.statusCode).render('error',{err});
 });
 app.listen('3000', ()=>{
