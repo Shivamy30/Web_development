@@ -1,5 +1,5 @@
 const mongoose= require('mongoose');
-const Schema= mongoose.connection;
+const Schema= mongoose.Schema;
 
 
 const reviewSchema= new Schema({
