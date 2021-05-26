@@ -23,7 +23,7 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp', {
 .then(()=>{
     console.log('connection open')
 }) .catch((err)=>{
-    console.log(err);
+    console.log('connection error');
 })
 
 const validateCamp=(req,res,next)=>{
@@ -77,7 +77,7 @@ app.post('/campgrounds',validateCamp, catchAsync(async(req,res)=>{
 
 app.get('/campgrounds/:id', catchAsync(async (req,res)=>{
     const {id}= req.params;
-    const camp= await campGround.findOne({_id:id});
+    const camp= await campGround.findOne({ _id: id }).populate('reviews');
      res.render('campgrounds/show',{camp});
 }));
 
