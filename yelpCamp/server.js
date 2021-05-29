@@ -110,6 +110,13 @@ app.post('/campgrounds/:id/reviews',validateReview,catchAsync(async(req,res)=>{
        
 }));
 
+app.delete('/campgrounds/:id/review/:revId',catchAsync( async(req,res,next)=>{
+     const {id, revId}= req.params;
+     await campGround.findByIdAndUpdate(id, {$pull: {reviews: revId}});
+     await Review.findByIdAndDelete(revId);
+     res.redirect(`/campgrounds/${id}`);
+}))
+
 app.all('*',(req,res,next)=>{
     next(new ExpressError('Page Not Found',404));
 })
