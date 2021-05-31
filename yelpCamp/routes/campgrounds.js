@@ -18,11 +18,10 @@ const validateCamp=(req,res,next)=>{
         next();
     }
 }
-router.get('/', async (req,res)=>{
+router.get('/', catchAsync(async(req,res)=>{
     const campGrounds= await campGround.find({});
     res.render('campgrounds/index',{campGrounds})
-});
-
+}));
 
 router.get('/new',(req,res)=>{
     res.render('campgrounds/new');
@@ -31,6 +30,7 @@ router.get('/new',(req,res)=>{
 router.post('/',validateCamp, catchAsync(async(req,res)=>{
     const newCamp= await new campGround(req.body.campground);
     await newCamp.save();
+    req.flash('success', 'campground created successfully!!');
      res.redirect(`/campgrounds/${newCamp._id}`);
 
 }));
@@ -38,6 +38,10 @@ router.post('/',validateCamp, catchAsync(async(req,res)=>{
 router.get('/:id', catchAsync(async (req,res)=>{
     const {id}= req.params;
     const camp= await campGround.findOne({ _id: id }).populate('reviews');
+    if(!camp){
+        req.flash('error', 'Cannot find campground');
+       return res.redirect('/campgrounds')
+    }
      res.render('campgrounds/show',{camp});
 }));
 
